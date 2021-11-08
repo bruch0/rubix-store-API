@@ -25,7 +25,6 @@ const getProducts = async (req, res) => {
       delete product.color;
       delete product.brand_id;
       delete product.weight;
-      delete product.total_qty;
       delete product.size;
     });
 
