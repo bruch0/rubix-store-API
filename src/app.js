@@ -9,4 +9,6 @@ app.use(cors());
 
 app.get('/products', getProducts);
 
+app.get('/', (req, res) => res.send('foi'));
+
 export default app;
