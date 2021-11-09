@@ -32,7 +32,7 @@ export default async function postSignIn(req, res) {
       );
 
       res.status(200).send({
-        user_id: user.id,
+        userId: user.id,
         name: user.name,
         email,
         token,
