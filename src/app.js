@@ -9,6 +9,4 @@ app.use(cors());
 
 app.get('/products', getProducts);
 
-app.get('/', (req, res) => res.send(process.env));
-
 export default app;
