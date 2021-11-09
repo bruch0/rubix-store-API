@@ -3,7 +3,7 @@ import pg from 'pg';
 const { Pool } = pg;
 let connectionData;
 
-if (process.NODE_ENV === 'prod') {
+if (process.env.NODE_ENV === 'prod') {
   connectionData = {
     connectionString: process.env.DATABASE_URL,
     ssl: {
