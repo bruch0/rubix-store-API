@@ -1,14 +1,9 @@
 import supertest from 'supertest';
 import faker from 'faker-br';
-import dotenv from 'dotenv';
 import connection from '../../src/database/database.js';
 import app from '../../src/app.js';
 import cleanDatabase from '../utils/database.js';
 import createUser from '../factories/userFactory.js';
-
-dotenv.config({
-  path: '../.env.test',
-});
 
 const request = supertest(app);
 

@@ -3,5 +3,4 @@ package-lock.json
 .env
 .env.dev
 .env.test
-commitlinterrc.json
 .husky
