@@ -5,5 +5,13 @@ const signInSchema = joi.object({
   password: joi.string().min(6).required(),
 });
 
-// eslint-disable-next-line import/prefer-default-export
-export { signInSchema };
+const signUpSchema = joi.object({
+  name: joi.string().min(3).required(),
+  email: joi.string().email().required(),
+  cpf: joi.string().length(11).pattern(/^[0-9]+$/).required(),
+  phone: joi.string().length(11).pattern(/^[0-9]+$/).required(),
+  password: joi.string().min(6).required(),
+  confirmPassword: joi.ref('password'),
+});
+
+export { signInSchema, signUpSchema };
