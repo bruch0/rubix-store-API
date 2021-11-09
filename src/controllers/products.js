@@ -6,19 +6,24 @@ const getProducts = async (req, res) => {
     return filtered;
   };
 
-  const { category, order } = req.query;
+  const { category, order, search } = req.query;
   let orderBy = '';
+  let searchFor = '';
   if (order === 'price') {
     orderBy = 'ORDER BY products.value';
   } else {
     orderBy = 'ORDER BY products.value DESC';
   }
+  if (search) {
+    searchFor = `WHERE products.name ILIKE '%${search}%'`;
+  }
+
   try {
     const result = await connection.query(
       `SELECT products.*, categories.name AS "categoryName"
        FROM products
           JOIN categories
-            ON products.category_id = categories.id ${order ? orderBy : ''}
+            ON products.category_id = categories.id ${searchFor} ${order ? orderBy : ''}
     `,
     );
 
