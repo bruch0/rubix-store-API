@@ -1,6 +1,5 @@
 import faker from 'faker/locale/pt_BR.js';
 import bcrypt from 'bcrypt';
-import cpf from '@fnando/cpf';
 import connection from '../../src/database/database.js';
 
 export default async function createUser() {
@@ -15,7 +14,6 @@ export default async function createUser() {
       faker.name.findName(),
       faker.internet.email(),
       hash,
-      cpf.generate(),
       faker.phone.phoneNumber('###########'),
     ],
   );

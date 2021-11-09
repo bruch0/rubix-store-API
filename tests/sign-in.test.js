@@ -10,7 +10,7 @@ afterAll(() => {
   connection.end();
 });
 
-beforeEach(cleanDatabase);
+//beforeEach(cleanDatabase);
 
 describe('POST /sign-in', () => {
   it('returns status 200 for valid access', async () => {
@@ -21,7 +21,7 @@ describe('POST /sign-in', () => {
       password: newUser.password,
     };
 
-    const result = await request.post('/api/auth/signin').send(bodyData);
+    const result = await request.post('/auth/signin').send(bodyData);
     expect(result.status).toEqual(200);
   });
 });

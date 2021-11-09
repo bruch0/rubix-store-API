@@ -9,7 +9,7 @@ export default async function postSignIn(req, res) {
   try {
     const { email, password } = req.body;
 
-    if (signInSchema.validate(req.body).error) {
+    if ((signInSchema.validate(req.body)).error) {
       return res.status(400).send('Dados inválidos');
     }
 
