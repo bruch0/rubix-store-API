@@ -1,4 +1,4 @@
-import faker from 'faker/locale/pt_BR.js';
+import faker from 'faker-br';
 import bcrypt from 'bcrypt';
 import connection from '../../src/database/database.js';
 
@@ -8,15 +8,17 @@ export default async function createUser() {
 
   const newUser = await connection.query(
     `INSERT INTO users (name, email, password, cpf, phone)
-    VALUES ($1, $2, $3)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING email, password;`,
     [
       faker.name.findName(),
       faker.internet.email(),
       hash,
+      faker.br.cpf(),
       faker.phone.phoneNumber('###########'),
     ],
   );
+
   newUser.rows[0].password = password;
   return newUser.rows[0];
 }

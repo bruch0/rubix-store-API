@@ -10,15 +10,24 @@ if (process.NODE_ENV === 'prod') {
       rejectUnauthorized: false,
     },
   };
-} else {
+} else if (process.NODE_ENV === 'dev') {
   connectionData = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    port: Number(process.env.DB_PORT),
+    port: process.env.DB_PORT,
     host: process.env.DB_HOST,
     database: process.env.DB_DATABASE,
   };
+} else {
+  connectionData = {
+    user: 'postgres',
+    password: '123456',
+    port: 5432,
+    host: 'localhost',
+    database: 'rubixstore_test',
+  };
 }
+
 const connection = new Pool(connectionData);
 
 export default connection;

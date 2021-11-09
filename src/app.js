@@ -6,6 +6,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post('/auth/signin', postSignIn);
+app.post('/auth/sign-in', postSignIn);
 
 export default app;

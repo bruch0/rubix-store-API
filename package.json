@@ -1,9 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=prod node src/server.js",
-    "dev": "NODE_ENV=dev nodemon src/server.js",
-    "test": "NODE_ENV=test npx jest src/server.js --watch"
+    "start": "NODE_ENV=prod node ./src/server.js",
+    "start:dev": "NODE_ENV=dev nodemon ./src/server.js",
+    "test": "NODE_ENV=test npx jest --watch"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",
@@ -30,6 +30,7 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-react": "^7.26.1",
     "faker": "^5.5.3",
+    "faker-br": "^0.4.1",
     "husky": "^7.0.4",
     "jest": "^27.3.1",
     "nodemon": "^2.0.13",

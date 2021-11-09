@@ -3,34 +3,36 @@
 import { v4 as uuid } from 'uuid';
 import bcrypt from 'bcrypt';
 import connection from '../database/database.js';
-import signInSchema from '../schemas/usersSchemas.js';
+import { signInSchema } from '../schemas/usersSchemas.js';
 
 export default async function postSignIn(req, res) {
   try {
     const { email, password } = req.body;
 
-    if ((signInSchema.validate(req.body)).error) {
-      return res.status(400).send('Dados inválidos');
+    const validationResult = signInSchema.validate(req.body, { abortEarly: false });
+
+    if (validationResult.error) {
+      return res.status(400).send(validationResult.error.details[0].message);
     }
 
-    const hasUser = await connection.query(
+    const selectedUser = await connection.query(
       'SELECT * FROM users WHERE email = $1;',
-      [email],
+      [email]
     );
 
-    const user = hasUser.rows[0];
+    const user = selectedUser.rows[0];
 
     if (user && bcrypt.compareSync(password, user.password)) {
       const token = uuid();
       await connection.query(
         `INSERT INTO sessions 
-        ("userId", token)
+        (user_id, token)
         VALUES ($1, $2);`,
         [user.id, token]
       );
 
       res.status(200).send({
-        userId: user.id,
+        user_id: user.id,
         name: user.name,
         email,
         token,
