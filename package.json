@@ -1,9 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=prod node ./server.js",
-    "start:dev": "NODE_ENV=dev nodemon ./server.js",
-    "test": "NODE_ENV=test npx jest ./server.js -- watch"
+    "start": "NODE_ENV=prod node src/server.js",
+    "start:dev": "NODE_ENV=dev nodemon src/server.js",
+    "test": "NODE_ENV=test npx jest --watch"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.15.8",
