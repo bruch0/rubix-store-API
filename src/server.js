@@ -1,4 +1,8 @@
 import './setup.js';
 import app from './app.js';
 
-app.listen(4000);
+if (process.env.PORT) {
+  app.listen(process.env.PORT);
+} else {
+  app.listen(4000);
+}
