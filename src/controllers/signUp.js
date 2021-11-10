@@ -3,7 +3,7 @@ import connection from '../database/database.js';
 import { signUpSchema } from '../schemas/usersSchemas.js';
 
 // eslint-disable-next-line consistent-return
-export default async function postSignUp(req, res) {
+export default async function signUp(req, res) {
   try {
     const {
       name,

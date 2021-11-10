@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import connection from '../database/database.js';
 import { signInSchema } from '../schemas/usersSchemas.js';
 
-export default async function postSignIn(req, res) {
+export default async function signIn(req, res) {
   try {
     const { email, password } = req.body;
 

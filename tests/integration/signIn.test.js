@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import faker from 'faker-br';
 import connection from '../../src/database/database.js';
 import app from '../../src/app.js';
-import cleanDatabase from '../utils/database.js';
+import clearDatabase from '../utils/database.js';
 import createUser from '../factories/userFactory.js';
 
 const request = supertest(app);
@@ -14,7 +14,7 @@ afterAll(() => {
   connection.end();
 });
 
-beforeEach(cleanDatabase);
+beforeEach(clearDatabase);
 
 describe('POST /auth/sign-in', () => {
   it('returns status 200 for valid access', async () => {
