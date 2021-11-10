@@ -51,7 +51,7 @@ describe('POST /auth/sign-in', () => {
     };
     const result = await request.post('/auth/sign-in').send(body);
     expect(result.text).toEqual(
-      '"password" length must be at least 6 characters long'
+      '"password" length must be at least 6 characters long',
     );
   });
 
@@ -72,7 +72,7 @@ describe('POST /auth/sign-in', () => {
     expect(newSessions.rows.length).toEqual(1);
   });
 
-  it('returns a jwt token for valid access', async () => {
+  it('returns a valid jwt token on sign-in', async () => {
     const newUser = await createUser();
     const bodyData = {
       email: newUser.email,
@@ -81,7 +81,7 @@ describe('POST /auth/sign-in', () => {
 
     const { body } = await request.post('/auth/sign-in').send(bodyData);
 
-    jwt.verify(body.token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(body.token, process.env.JWT_SECRET, (err) => {
       expect(err).toBeNull();
     });
   });
