@@ -21,8 +21,8 @@ export default async function signUp(req, res) {
 
     const hasUser = await connection.query(
       `SELECT * FROM users
-      WHERE email = $1;`,
-      [email],
+        WHERE email = $1 OR phone = $2 OR cpf = $3;`,
+      [email, phone, cpf],
     );
     if (hasUser.rowCount > 0) {
       return res.status(409).send('Usuário já existente.');
