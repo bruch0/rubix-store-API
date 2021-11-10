@@ -1,7 +1,7 @@
-import '../src/setup.js';
+import '../../src/setup.js';
 import supertest from 'supertest';
-import app from '../src/app.js';
-import connection from '../src/database/database.js';
+import app from '../../src/app.js';
+import connection from '../../src/database/database.js';
 
 afterAll(() => {
   connection.end();
