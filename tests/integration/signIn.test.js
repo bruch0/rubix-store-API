@@ -1,3 +1,4 @@
+import '../../src/setup.js';
 import supertest from 'supertest';
 import faker from 'faker-br';
 import connection from '../../src/database/database.js';
@@ -47,6 +48,43 @@ describe('POST /auth/sign-in', () => {
       password: faker.internet.password(3),
     };
     const result = await request.post('/auth/sign-in').send(body);
-    expect(result.text).toEqual('"password" length must be at least 6 characters long');
+    expect(result.text).toEqual(
+      '"password" length must be at least 6 characters long',
+    );
+  });
+
+  it('creates a session for valid access', async () => {
+    const newUser = await createUser();
+
+    const body = {
+      email: newUser.email,
+      password: newUser.password,
+    };
+
+    const sessions = await connection.query('SELECT * FROM sessions');
+    expect(sessions.rows.length).toEqual(0);
+
+    await request.post('/auth/sign-in').send(body);
+
+    const newSessions = await connection.query('SELECT * FROM sessions;');
+    expect(newSessions.rows.length).toEqual(1);
+  });
+
+  it('returns a token for valid access', async () => {
+    const newUser = await createUser();
+    const bodyData = {
+      email: newUser.email,
+      password: newUser.password,
+    };
+
+    const { body } = await request.post('/auth/sign-in').send(bodyData);
+
+    const lastSession = await connection.query(
+      `SELECT * FROM sessions
+      ORDER BY id DESC LIMIT 1;`,
+    );
+
+    const { token } = lastSession.rows[0];
+    expect(body.token).toEqual(token);
   });
 });
