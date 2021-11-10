@@ -33,7 +33,14 @@ export default async function postSignIn(req, res) {
         sessionId: sessionId.rows[0].id,
       }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
 
-      res.status(200).send({ token });
+      res.status(200).send({
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+        cpf: user.cpf,
+        phone: user.phone,
+        token
+      });
     } else {
       res.status(401).send('E-mail ou senha inválidos');
     }
