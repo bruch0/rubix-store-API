@@ -14,7 +14,7 @@ app.post('/auth/sign-in', postSignIn);
 app.post('/auth/sign-up', postSignUp);
 
 app.get('/teste-auth', verifyJWT, (req, res) => {
-  res.send('Autenticado!');
+  res.send(`Autenticado! userId: ${req.sessionId}`);
 });
 
 app.get('/products', getProducts);

@@ -23,24 +23,17 @@ export default async function postSignIn(req, res) {
     const user = selectedUser.rows[0];
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      const data = {
-        userId: user.id,
-        name: user.name,
-        email: user.email,
-        cpf: user.cpf,
-        phone: user.phone
-      };
-
-      const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
-
-      await connection.query(
+      const sessionId = await connection.query(
         `INSERT INTO sessions 
-        (user_id, token)
-        VALUES ($1, $2);`,
-        [user.id, token]
+        (user_id) VALUES ($1)
+        RETURNING id;`,
+        [user.id]
       );
+      const token = jwt.sign({
+        sessionId: sessionId.rows[0].id,
+      }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
 
-      res.status(200).send({ auth: true, token });
+      res.status(200).send({ token });
     } else {
       res.status(401).send('E-mail ou senha inválidos');
     }

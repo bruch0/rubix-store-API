@@ -1,5 +1,7 @@
+/* eslint-disable consistent-return */
 import '../../src/setup.js';
 import supertest from 'supertest';
+import jwt from 'jsonwebtoken';
 import faker from 'faker-br';
 import connection from '../../src/database/database.js';
 import app from '../../src/app.js';
@@ -49,7 +51,7 @@ describe('POST /auth/sign-in', () => {
     };
     const result = await request.post('/auth/sign-in').send(body);
     expect(result.text).toEqual(
-      '"password" length must be at least 6 characters long',
+      '"password" length must be at least 6 characters long'
     );
   });
 
@@ -70,7 +72,7 @@ describe('POST /auth/sign-in', () => {
     expect(newSessions.rows.length).toEqual(1);
   });
 
-  it('returns a token for valid access', async () => {
+  it('returns a jwt token for valid access', async () => {
     const newUser = await createUser();
     const bodyData = {
       email: newUser.email,
@@ -79,12 +81,8 @@ describe('POST /auth/sign-in', () => {
 
     const { body } = await request.post('/auth/sign-in').send(bodyData);
 
-    const lastSession = await connection.query(
-      `SELECT * FROM sessions
-      ORDER BY id DESC LIMIT 1;`,
-    );
-
-    const { token } = lastSession.rows[0];
-    expect(body.token).toEqual(token);
+    jwt.verify(body.token, process.env.JWT_SECRET, (err, decoded) => {
+      expect(err).toBeNull();
+    });
   });
 });
