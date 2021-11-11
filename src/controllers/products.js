@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import connection from '../database/database.js';
 
 const getProducts = async (req, res) => {
@@ -27,6 +28,10 @@ const getProducts = async (req, res) => {
     `,
     );
 
+    const images = await connection.query(
+      'SELECT product_id, url FROM products_images;',
+    );
+
     const products = result.rows;
     products.forEach((product) => {
       delete product.category_id;
@@ -36,6 +41,7 @@ const getProducts = async (req, res) => {
       delete product.brand_id;
       delete product.weight;
       delete product.size;
+      product.imageUrl = images.rows.filter((img) => img.product_id === product.id)[0].url;
     });
 
     if (category) {

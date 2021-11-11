@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import app from '../../src/app.js';
 import connection from '../../src/database/database.js';
 import clearDatabase from '../utils/database.js';
-import createUser from '../factories/userFactory.js';
+import { createUser } from '../factories/userFactory.js';
 
 const request = supertest(app);
 
