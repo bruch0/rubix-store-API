@@ -18,7 +18,6 @@ async function createUser() {
       faker.phone.phoneNumber('###########'),
     ],
   );
-
   newUser.rows[0].password = password;
   return newUser.rows[0];
 }
