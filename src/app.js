@@ -5,6 +5,7 @@ import signIn from './controllers/signIn.js';
 import authenticationJWT from './middlewares/authenticationJWT.js';
 import signUp from './controllers/signUp.js';
 import postCart from './controllers/cart.js';
+import { sendRecoveryMail, authorizePasswordRoute, changePassword } from './controllers/password.js';
 import connection from './database/database.js';
 
 import getProducts from './controllers/products.js';
@@ -23,6 +24,12 @@ app.get('/teste-auth', authenticationJWT, (req, res) => {
 app.get('/products', getProducts);
 
 app.post('/cart', authenticationJWT, postCart);
+
+app.post('/recover-password', sendRecoveryMail);
+
+app.post('/authorize-password', authorizePasswordRoute);
+
+app.post('/change-password', changePassword);
 
 // DEV_ROUTES
 app.post('/add-category', async (req, res) => {

@@ -45,6 +45,6 @@ export default async function signIn(req, res) {
       res.status(401).send('E-mail ou senha inválidos');
     }
   } catch (error) {
-    res.status(500);
+    res.sendStatus(500);
   }
 }
