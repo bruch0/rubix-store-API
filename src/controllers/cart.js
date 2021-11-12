@@ -45,8 +45,7 @@ export default async function postCart(req, res) {
     );
 
     res.status(200).send('Produto adicionado ao carrinho!');
-  } catch (error) {
-    console.log(error);
+  } catch {
     res.status(500);
   }
 }

@@ -34,7 +34,6 @@ const getProduct = async (req, res) => {
 
     res.status(200).send(product);
   } catch (error) {
-    console.log(error);
     res.sendStatus(500);
   }
 };
