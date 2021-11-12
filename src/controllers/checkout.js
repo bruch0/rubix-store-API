@@ -49,6 +49,10 @@ const getUserCheckout = async (req, res) => {
 
   const { userId } = req.body;
 
+  if (!userId) {
+    res.sendStatus(401);
+  }
+
   try {
     const result = await connection.query('SELECT cart.*, products.name, products.value, products.weight FROM cart JOIN products ON cart.product_id = products.id WHERE cart.user_id = $1', [userId]);
     const cart = groupProducts(result.rows);
