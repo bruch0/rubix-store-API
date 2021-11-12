@@ -51,6 +51,7 @@ const getUserCheckout = async (req, res) => {
 
   if (!userId) {
     res.sendStatus(401);
+    return;
   }
 
   try {
