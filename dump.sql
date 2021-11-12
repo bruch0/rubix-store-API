@@ -80,7 +80,7 @@ CREATE TABLE "recovery_password" (
 	"id" serial NOT NULL,
 	"user_id" integer NOT NULL,
 	"token" varchar(36) NOT NULL,
-	"creation_date" integer NOT NULL,
+	"creation_date" varchar(50) NOT NULL,
 	CONSTRAINT "recovery_password_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -167,15 +167,3 @@ ALTER TABLE "product_contains" ADD CONSTRAINT "product_contains_fk0" FOREIGN KEY
 
 ALTER TABLE "cart" ADD CONSTRAINT "cart_fk0" FOREIGN KEY ("product_id") REFERENCES "products"("id");
 ALTER TABLE "cart" ADD CONSTRAINT "cart_fk1" FOREIGN KEY ("user_id") REFERENCES "users"("id");
-
-
-
-
-
-
-
-
-
-
-
-
