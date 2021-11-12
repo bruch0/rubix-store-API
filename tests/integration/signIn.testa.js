@@ -14,9 +14,9 @@ afterAll(() => {
   connection.end();
 });
 
-beforeEach(clearDatabase);
-
 describe('POST /auth/sign-in', () => {
+  beforeEach(clearDatabase);
+
   it('returns status 200 for valid access', async () => {
     const newUser = await createUser();
 

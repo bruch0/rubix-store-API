@@ -21,7 +21,7 @@ export default async function postCart(req, res) {
     );
 
     if (resultProducts.rowCount === 0) {
-      return res.status(400).send('Produto não existe.');
+      return res.status(404).send('Produto não existe.');
     }
 
     const maxQuantity = resultProducts.rows[0]?.total_qty;
@@ -35,7 +35,7 @@ export default async function postCart(req, res) {
       [req.sessionId],
     );
 
-    const userId = result.rows[0].id;
+    const userId = result.rows[0].user_id;
 
     await connection.query(
       `INSERT INTO cart
@@ -46,6 +46,7 @@ export default async function postCart(req, res) {
 
     res.status(200).send('Produto adicionado ao carrinho!');
   } catch (error) {
+    console.log(error);
     res.status(500);
   }
 }
