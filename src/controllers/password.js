@@ -84,7 +84,6 @@ const changePassword = async (req, res) => {
 
   try {
     const hash = bcrypt.hashSync(newPassword, 10);
-    console.log(newPassword, email);
     await connection.query(`UPDATE users SET password = $1 WHERE email = '${email}'`, [hash]);
     res.sendStatus(200);
   } catch {
