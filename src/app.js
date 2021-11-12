@@ -7,6 +7,7 @@ import authenticationJWT from './middlewares/authenticationJWT.js';
 
 import signUp from './controllers/signUp.js';
 import postCart from './controllers/cart.js';
+import { sendRecoveryMail, authorizePasswordRoute, changePassword } from './controllers/password.js';
 
 import getProducts from './controllers/products.js';
 import getProduct from './controllers/product.js';
@@ -26,6 +27,12 @@ app.get('/products', getProducts);
 app.get('/product/:productId', getProduct);
 
 app.post('/cart', authenticationJWT, postCart);
+
+app.post('/recover-password', sendRecoveryMail);
+
+app.post('/authorize-password', authorizePasswordRoute);
+
+app.post('/change-password', changePassword);
 
 // DEV_ROUTES
 app.post('/add-category', async (req, res) => {
