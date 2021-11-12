@@ -1,9 +1,9 @@
 import '../../src/setup.js';
 import supertest from 'supertest';
 import faker from 'faker';
+import { v4 as uuid } from 'uuid';
 import app from '../../src/app.js';
 import connection from '../../src/database/database.js';
-import { v4 as uuid } from 'uuid'
 
 afterAll(async () => {
   connection.end();

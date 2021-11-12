@@ -1,40 +1,38 @@
 import '../../src/setup.js';
 import supertest from 'supertest';
+import faker from 'faker-br';
+import jwt from 'jsonwebtoken';
 import app from '../../src/app.js';
 import connection from '../../src/database/database.js';
 import clearDatabase from '../utils/database.js';
-import createUser from '../factories/userFactory.js';
+import { createProduct, createSession } from '../factories/userFactory.js';
 
 const request = supertest(app);
 
-afterAll(() => {
-  connection.end();
+afterAll(async () => {
+  await connection.end();
 });
 
-beforeEach(clearDatabase);
-
 describe('POST /cart', () => {
+  beforeEach(clearDatabase);
+
   it('returns 200 when add product to cart successfully', async () => {
-    const newUser = await createUser();
-
-    const bodySignIn = {
-      email: newUser.email,
-      password: newUser.password,
-    };
-
-    const resultSignIn = await request.post('/auth/sign-in').send(bodySignIn);
-
-    const { token } = resultSignIn.body;
+    const token = jwt.sign({
+      sessionId: await createSession(),
+    }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
 
     const body = {
-      product_id: 11,
-      product_qty: 1,
+      product_id: await createProduct(),
+      product_qty: faker.random.number({
+        min: 1, max: 10,
+      }),
     };
 
     const result = await request
       .post('/cart')
       .set('x-access-token', token)
       .send(body);
+
     expect(result.status).toEqual(200);
   });
 
@@ -44,19 +42,12 @@ describe('POST /cart', () => {
   });
 
   it('returns 400 when quantity product greater than available', async () => {
-    const newUser = await createUser();
-
-    const bodySignIn = {
-      email: newUser.email,
-      password: newUser.password,
-    };
-
-    const resultSignIn = await request.post('/auth/sign-in').send(bodySignIn);
-
-    const { token } = resultSignIn.body;
+    const token = jwt.sign({
+      sessionId: await createSession(),
+    }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
 
     const body = {
-      product_id: 11,
+      product_id: await createProduct(),
       product_qty: 9999999,
     };
 
@@ -67,17 +58,10 @@ describe('POST /cart', () => {
     expect(result.status).toEqual(400);
   });
 
-  it('returns 400 when product id doesnt exist', async () => {
-    const newUser = await createUser();
-
-    const bodySignIn = {
-      email: newUser.email,
-      password: newUser.password,
-    };
-
-    const resultSignIn = await request.post('/auth/sign-in').send(bodySignIn);
-
-    const { token } = resultSignIn.body;
+  it('returns 404 when product id doesnt exist', async () => {
+    const token = jwt.sign({
+      sessionId: await createSession(),
+    }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
 
     const body = {
       product_id: 0,
@@ -88,6 +72,6 @@ describe('POST /cart', () => {
       .post('/cart')
       .set('x-access-token', token)
       .send(body);
-    expect(result.status).toEqual(400);
+    expect(result.status).toEqual(404);
   });
 });

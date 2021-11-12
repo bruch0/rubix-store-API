@@ -9,7 +9,7 @@ async function createUser() {
   const newUser = await connection.query(
     `INSERT INTO users (name, email, password, cpf, phone)
     VALUES ($1, $2, $3, $4, $5)
-    RETURNING email, password;`,
+    RETURNING id, email, password;`,
     [
       faker.name.findName(),
       faker.internet.email(),
@@ -20,6 +20,18 @@ async function createUser() {
   );
   newUser.rows[0].password = password;
   return newUser.rows[0];
+}
+
+async function createSession() {
+  const { id: userId } = await createUser();
+
+  const result = await connection.query(
+    `INSERT INTO sessions 
+    (user_id) VALUES ($1)
+    RETURNING id;`,
+    [userId],
+  );
+  return result.rows[0].id;
 }
 
 async function validUser() {
@@ -159,6 +171,86 @@ async function invalidPhone() {
   return userData;
 }
 
+async function createCategory() {
+  const result = await connection.query(
+    `INSERT INTO categories (name) VALUES ($1)
+    RETURNING id;`,
+    ['3x3x3'],
+  );
+  return Number(result.rows[0].id);
+}
+
+async function createBrand() {
+  const result = await connection.query(
+    `INSERT INTO products_brands (name) VALUES ($1)
+    RETURNING id;`,
+    ['Moyu'],
+  );
+  return Number(result.rows[0].id);
+}
+
+async function createProduct() {
+  const result = await connection.query(
+    `INSERT INTO products
+    (name, category_id, value, description, total_qty, weight, brand_id, model, size, color)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    RETURNING id;`,
+    [
+      faker.commerce.productName(),
+      await createCategory(),
+      faker.random.number({
+        min: 1999,
+        max: 300000,
+      }),
+      faker.lorem.paragraph(),
+      faker.random.number({
+        min: 20,
+        max: 100,
+      }),
+      faker.random.number({
+        min: 80,
+        max: 500,
+      }),
+      await createBrand(),
+      faker.commerce.department(),
+      faker.commerce.productMaterial(),
+      faker.commerce.color(),
+    ],
+  );
+
+  const productId = result.rows[0].id;
+
+  const contains = [
+    { item: faker.lorem.word() },
+    { item: faker.lorem.word() },
+    { item: faker.lorem.word() },
+  ];
+
+  contains.forEach(async (content) => {
+    await connection.query(
+      `INSERT INTO product_contains
+      (product_id, item) VALUES ($1, $2)`,
+      [productId, content.item],
+    );
+  });
+
+  const images = [
+    { url: faker.image.imageUrl() },
+    { url: faker.image.imageUrl() },
+    { url: faker.image.imageUrl() },
+    { url: faker.image.imageUrl() },
+  ];
+
+  images.forEach(async (image) => {
+    await connection.query(
+      `INSERT INTO products_images
+      (product_id, url) VALUES ($1, $2)`,
+      [productId, image.url],
+    );
+  });
+  return productId;
+}
+
 export {
   createUser,
   validUser,
@@ -171,4 +263,6 @@ export {
   invalidEmptyCpf,
   invalidPhone,
   invalidEmptyPhone,
+  createProduct,
+  createSession,
 };

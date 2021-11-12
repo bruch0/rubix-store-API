@@ -2,13 +2,15 @@
 import express from 'express';
 import cors from 'cors';
 import signIn from './controllers/signIn.js';
+import connection from './database/database.js';
 import authenticationJWT from './middlewares/authenticationJWT.js';
+
 import signUp from './controllers/signUp.js';
 import postCart from './controllers/cart.js';
 import { sendRecoveryMail, authorizePasswordRoute, changePassword } from './controllers/password.js';
-import connection from './database/database.js';
 
 import getProducts from './controllers/products.js';
+import getProduct from './controllers/product.js';
 
 const app = express();
 app.use(express.json());
@@ -22,6 +24,7 @@ app.get('/teste-auth', authenticationJWT, (req, res) => {
 });
 
 app.get('/products', getProducts);
+app.get('/product/:productId', getProduct);
 
 app.post('/cart', authenticationJWT, postCart);
 
@@ -34,7 +37,7 @@ app.post('/change-password', changePassword);
 // DEV_ROUTES
 app.post('/add-category', async (req, res) => {
   await connection.query(
-    'INSERT INTO categories (name) VALUES ($1)',
+    'INSERT INTO categories (name) VALUES ($1);',
     [req.body.name],
   );
   res.send('Criada.');
@@ -42,7 +45,7 @@ app.post('/add-category', async (req, res) => {
 
 app.post('/add-brand', async (req, res) => {
   await connection.query(
-    'INSERT INTO products_brands (name) VALUES ($1)',
+    'INSERT INTO products_brands (name) VALUES ($1);',
     [req.body.name],
   );
   res.send('Criado.');

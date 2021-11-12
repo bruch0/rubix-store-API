@@ -37,7 +37,7 @@ export default async function signUp(req, res) {
     );
 
     res.status(201).send('Conta criada com sucesso.');
-  } catch (error) {
+  } catch {
     res.status(500);
   }
 }

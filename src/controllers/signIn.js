@@ -23,14 +23,15 @@ export default async function signIn(req, res) {
     const user = selectedUser.rows[0];
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      const sessionId = await connection.query(
+      const session = await connection.query(
         `INSERT INTO sessions 
         (user_id) VALUES ($1)
         RETURNING id;`,
         [user.id]
       );
+
       const token = jwt.sign({
-        sessionId: sessionId.rows[0].id,
+        sessionId: session.rows[0].id,
       }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
 
       res.status(200).send({

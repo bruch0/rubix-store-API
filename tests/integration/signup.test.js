@@ -1,8 +1,8 @@
 /* eslint-disable consistent-return */
 import '../../src/setup.js';
 import supertest from 'supertest';
-import connection from '../../src/database/database.js';
 import app from '../../src/app.js';
+import connection from '../../src/database/database.js';
 import clearDatabase from '../utils/database.js';
 import {
   validUser,
@@ -21,9 +21,8 @@ const request = supertest(app);
 
 afterAll(() => {
   connection.end();
+  clearDatabase();
 });
-
-beforeAll(clearDatabase);
 
 describe('POST /auth/sign-up', () => {
   it('returns status 201 for valid body and unused email', async () => {
