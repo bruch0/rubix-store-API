@@ -11,6 +11,7 @@ import { sendRecoveryMail, authorizePasswordRoute, changePassword } from './cont
 
 import getProducts from './controllers/products.js';
 import getProduct from './controllers/product.js';
+import { getUserCheckout, buyCart } from './controllers/checkout.js';
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,10 @@ app.post('/recover-password', sendRecoveryMail);
 app.post('/authorize-password', authorizePasswordRoute);
 
 app.post('/change-password', changePassword);
+
+app.get('/checkout', getUserCheckout);
+
+app.post('/checkout', buyCart);
 
 // DEV_ROUTES
 app.post('/add-category', async (req, res) => {
