@@ -5,6 +5,10 @@ const getProduct = async (req, res) => {
   try {
     const { productId } = req.params;
 
+    if (Number.isNaN(Number(productId))) {
+      return res.status(400).send('Parametro invalido');
+    }
+
     const productResult = await connection.query(
       'SELECT * FROM products WHERE id = $1;',
       [productId],
