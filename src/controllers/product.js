@@ -10,7 +10,16 @@ const getProduct = async (req, res) => {
     }
 
     const productResult = await connection.query(
-      'SELECT * FROM products WHERE id = $1;',
+      `SELECT 
+        products.*,
+        categories.name AS "categoryName",
+        products_brands.name AS "brandName"
+      FROM products
+      JOIN categories
+        ON products.category_id = categories.id
+      JOIN products_brands
+        ON products.brand_id = products_brands.id
+      WHERE products.id = $1;`,
       [productId],
     );
 
