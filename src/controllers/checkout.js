@@ -20,6 +20,7 @@ const getUserCheckout = async (req, res) => {
             productName: products[i].name,
             totalValue: products[i].value * productCount,
             totalWeight: products[i].weight * productCount,
+            productUrl: products[i].url,
           },
         );
       }
@@ -55,10 +56,11 @@ const getUserCheckout = async (req, res) => {
   }
 
   try {
-    const result = await connection.query('SELECT cart.*, products.name, products.value, products.weight FROM cart JOIN products ON cart.product_id = products.id WHERE cart.user_id = $1', [userId]);
+    const result = await connection.query('SELECT cart.*, products.name, products.value, products.weight, products_images.url FROM cart JOIN products ON cart.product_id = products.id JOIN products_images ON cart.product_id = products_images.product_id WHERE cart.user_id = $1', [userId]);
     const cart = groupProducts(result.rows);
     const subTotal = calculateTotalValue(cart);
     const totalWeight = calculateTotalWeight(cart);
+    console.log(cart);
     res.send({ cart, subTotal, totalWeight });
   } catch {
     res.sendStatus(500);

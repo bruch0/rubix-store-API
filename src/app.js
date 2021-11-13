@@ -35,9 +35,9 @@ app.post('/authorize-password', authorizePasswordRoute);
 
 app.post('/change-password', changePassword);
 
-app.get('/checkout', getUserCheckout);
+app.post('/checkout', getUserCheckout);
 
-app.post('/checkout', buyCart);
+app.post('/buy-checkout', buyCart);
 
 // DEV_ROUTES
 app.post('/add-category', async (req, res) => {
