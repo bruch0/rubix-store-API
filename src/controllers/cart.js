@@ -15,11 +15,14 @@ const postCart = async (req, res) => {
     const {
       product_id: productId,
       product_qty: productQty,
+      isUpdate,
     } = req.body;
 
     const userId = await getAuthenticatedUserId(req.sessionId);
 
-    const { error: errorValidation } = cartSchema.validate(req.body, { abortEarly: false });
+    const { error: errorValidation } = cartSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
     if (errorValidation) {
       return res.status(400).send(errorValidation.details[0].message);
@@ -33,7 +36,6 @@ const postCart = async (req, res) => {
     if (resultProducts.rowCount === 0) {
       return res.status(404).send('Produto não existe.');
     }
-
     const cartSumResult = await connection.query(
       `SELECT SUM(product_qty) AS total
       FROM cart
@@ -44,8 +46,26 @@ const postCart = async (req, res) => {
     const currentQtyCart = Number(cartSumResult.rows[0]?.total);
     const maxQuantity = resultProducts.rows[0]?.total_qty;
 
-    if ((productQty + currentQtyCart) > maxQuantity) {
+    if ((!isUpdate && (productQty + currentQtyCart) > maxQuantity) || productQty > maxQuantity) {
       return res.status(400).send('Quantidade maior que o estoque.');
+    }
+
+    if (productQty === 0) {
+      await connection.query(
+        `DELETE FROM cart
+        WHERE product_id = $1 AND user_id = $2;`,
+        [productId, userId],
+      );
+      return res.status(200).send('Produto removido do carrinho.');
+    }
+
+    if (isUpdate) {
+      await connection.query(
+        `UPDATE cart SET product_qty = $1
+        WHERE product_id = $2 AND user_id = $3;`,
+        [productQty, productId, userId],
+      );
+      return res.status(200).send('Quantidade atualizada no carrinho.');
     }
 
     if (currentQtyCart) {
@@ -54,7 +74,7 @@ const postCart = async (req, res) => {
         WHERE product_id = $2 AND user_id = $3;`,
         [productQty + currentQtyCart, productId, userId],
       );
-      return res.status(200).send('Produto somado ao carrinho.');
+      return res.status(200).send('Quantidade atualizada no carrinho.');
     }
 
     await connection.query(
@@ -83,10 +103,6 @@ const getCart = async (req, res) => {
       WHERE cart.user_id = $1;`,
       [userId],
     );
-
-    if (productResult.rowCount === 0) {
-      return res.status(404).send('Usuário não encontrado.');
-    }
 
     const products = productResult.rows;
 
