@@ -19,10 +19,6 @@ app.use(cors());
 app.post('/auth/sign-in', signIn);
 app.post('/auth/sign-up', signUp);
 
-app.get('/teste-auth', authenticationJWT, (req, res) => {
-  res.send(`Autenticado! userId: ${req.sessionId}`);
-});
-
 app.get('/products', getProducts);
 app.get('/product/:productId', getProduct);
 
