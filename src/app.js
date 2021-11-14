@@ -6,7 +6,7 @@ import connection from './database/database.js';
 import authenticationJWT from './middlewares/authenticationJWT.js';
 
 import signUp from './controllers/signUp.js';
-import postCart from './controllers/cart.js';
+import { getCart, postCart } from './controllers/cart.js';
 import { sendRecoveryMail, authorizePasswordRoute, changePassword } from './controllers/password.js';
 
 import getProducts from './controllers/products.js';
@@ -27,6 +27,7 @@ app.get('/products', getProducts);
 app.get('/product/:productId', getProduct);
 
 app.post('/cart', authenticationJWT, postCart);
+app.get('/cart', authenticationJWT, getCart);
 
 app.post('/recover-password', sendRecoveryMail);
 

@@ -75,3 +75,6 @@ describe('POST /cart', () => {
     expect(result.status).toEqual(404);
   });
 });
+
+describe('GET /cart', () => {
+});

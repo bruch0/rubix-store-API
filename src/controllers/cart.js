@@ -2,12 +2,22 @@
 import connection from '../database/database.js';
 import { cartSchema } from '../schemas/cartSchemas.js';
 
-export default async function postCart(req, res) {
+const getAuthenticatedUserId = async (sessionId) => {
+  const result = await connection.query(
+    'SELECT * FROM sessions WHERE id = $1;',
+    [sessionId],
+  );
+  return result.rows[0].user_id;
+};
+
+const postCart = async (req, res) => {
   try {
     const {
       product_id: productId,
       product_qty: productQty,
     } = req.body;
+
+    const userId = await getAuthenticatedUserId(req.sessionId);
 
     const { error: errorValidation } = cartSchema.validate(req.body, { abortEarly: false });
 
@@ -24,18 +34,28 @@ export default async function postCart(req, res) {
       return res.status(404).send('Produto não existe.');
     }
 
+    const cartSumResult = await connection.query(
+      `SELECT SUM(product_qty) AS total
+      FROM cart
+      WHERE product_id = $1 AND user_id = $2;`,
+      [productId, userId],
+    );
+
+    const currentQtyCart = Number(cartSumResult.rows[0]?.total);
     const maxQuantity = resultProducts.rows[0]?.total_qty;
 
-    if (productQty > maxQuantity) {
+    if ((productQty + currentQtyCart) > maxQuantity) {
       return res.status(400).send('Quantidade maior que o estoque.');
     }
 
-    const result = await connection.query(
-      'SELECT * FROM sessions WHERE id = $1;',
-      [req.sessionId],
-    );
-
-    const userId = result.rows[0].user_id;
+    if (currentQtyCart) {
+      await connection.query(
+        `UPDATE cart SET product_qty = $1
+        WHERE product_id = $2 AND user_id = $3;`,
+        [productQty + currentQtyCart, productId, userId],
+      );
+      return res.status(200).send('Produto somado ao carrinho.');
+    }
 
     await connection.query(
       `INSERT INTO cart
@@ -43,10 +63,47 @@ export default async function postCart(req, res) {
           VALUES ($1, $2, $3)`,
       [userId, productId, productQty],
     );
-
-    res.status(200).send('Produto adicionado ao carrinho!');
-  } catch (error) {
-    console.log(error);
+    res.status(200).send('Novo produto adicionado ao carrinho.');
+  } catch (err) {
     res.status(500);
   }
-}
+};
+
+const getCart = async (req, res) => {
+  try {
+    const userId = await getAuthenticatedUserId(req.sessionId);
+
+    const productResult = await connection.query(
+      `SELECT
+        cart.product_qty AS "qty", cart.product_id,
+        products.name, products.value, products.total_qty
+      FROM cart
+      JOIN products
+        ON cart.product_id = products.id
+      WHERE cart.user_id = $1;`,
+      [userId],
+    );
+
+    if (productResult.rowCount === 0) {
+      return res.status(404).send('Usuário não encontrado.');
+    }
+
+    const products = productResult.rows;
+
+    const resultImages = await connection.query(
+      'SELECT url, product_id FROM products_images;',
+    );
+
+    const images = resultImages.rows;
+
+    products.forEach((product, index) => {
+      product.imageUrl = images[index].url;
+    });
+
+    res.status(200).send(products);
+  } catch (err) {
+    res.sendStatus(500);
+  }
+};
+
+export { postCart, getCart };
