@@ -32,7 +32,7 @@ export default async function signIn(req, res) {
 
       const token = jwt.sign({
         sessionId: session.rows[0].id,
-      }, process.env.JWT_SECRET, { expiresIn: 60 * 60 });
+      }, process.env.JWT_SECRET, { expiresIn: 3600 * 48 });
 
       res.status(200).send({
         userId: user.id,

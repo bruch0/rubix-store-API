@@ -60,7 +60,6 @@ const getUserCheckout = async (req, res) => {
     const cart = groupProducts(result.rows);
     const subTotal = calculateTotalValue(cart);
     const totalWeight = calculateTotalWeight(cart);
-    console.log(cart);
     res.send({ cart, subTotal, totalWeight });
   } catch {
     res.sendStatus(500);

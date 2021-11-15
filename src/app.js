@@ -4,11 +4,9 @@ import cors from 'cors';
 import signIn from './controllers/signIn.js';
 import connection from './database/database.js';
 import authenticationJWT from './middlewares/authenticationJWT.js';
-
-import signUp from './controllers/signUp.js';
-import postCart from './controllers/cart.js';
+import { getCart, postCart } from './controllers/cart.js';
 import { sendRecoveryMail, authorizePasswordRoute, changePassword } from './controllers/password.js';
-
+import signUp from './controllers/signUp.js';
 import getProducts from './controllers/products.js';
 import getProduct from './controllers/product.js';
 import { getUserCheckout, buyCart } from './controllers/checkout.js';
@@ -20,14 +18,11 @@ app.use(cors());
 app.post('/auth/sign-in', signIn);
 app.post('/auth/sign-up', signUp);
 
-app.get('/teste-auth', authenticationJWT, (req, res) => {
-  res.send(`Autenticado! userId: ${req.sessionId}`);
-});
-
 app.get('/products', getProducts);
 app.get('/product/:productId', getProduct);
 
 app.post('/cart', authenticationJWT, postCart);
+app.get('/cart', authenticationJWT, getCart);
 
 app.post('/recover-password', sendRecoveryMail);
 
