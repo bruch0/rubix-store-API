@@ -35,7 +35,7 @@ const getUserInfo = async (req, res) => {
       const resultBoughtProducts = await connection.query(
         `SELECT
           bought_products.product_id, bought_products.qty,
-          products.name
+          products.name, products.value
         FROM bought_products
         JOIN products
           ON bought_products.product_id = products.id
