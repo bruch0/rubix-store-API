@@ -23,7 +23,7 @@ const getUserInfo = async (req, res) => {
     const userInfo = userResult.rows[0];
 
     const resultPurchases = await connection.query(
-      `SELECT id, total_value
+      `SELECT id, total_value, creation_date
       FROM purchases
       WHERE user_id = $1;`,
       [userId],
