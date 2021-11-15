@@ -1,5 +1,13 @@
 import connection from '../database/database.js';
 
+const getAuthenticatedUserId = async (sessionId) => {
+  const result = await connection.query(
+    'SELECT * FROM sessions WHERE id = $1;',
+    [sessionId],
+  );
+  return result.rows[0].user_id;
+};
+
 const getUserCheckout = async (req, res) => {
   const createProductArray = (products) => {
     const resultingProducts = [];
@@ -62,12 +70,7 @@ const getUserCheckout = async (req, res) => {
     return total;
   };
 
-  const { userId } = req.body;
-
-  if (!userId) {
-    res.sendStatus(401);
-    return;
-  }
+  const userId = await getAuthenticatedUserId(req.sessionId);
 
   try {
     const result = await connection.query('SELECT cart.*, products.name, products.value, products.weight FROM cart JOIN products ON cart.product_id = products.id WHERE cart.user_id = $1', [userId]);
@@ -82,7 +85,9 @@ const getUserCheckout = async (req, res) => {
 };
 
 const buyCart = async (req, res) => {
-  const { userId, totalValue, cart } = req.body;
+  const { totalValue, cart } = req.body;
+
+  const userId = await getAuthenticatedUserId(req.sessionId);
 
   if (!cart || !userId || !totalValue || cart.length === 0) {
     res.sendStatus(400);
