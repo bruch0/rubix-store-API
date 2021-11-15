@@ -60,8 +60,7 @@ const getUserInfo = async (req, res) => {
       ...userInfo,
       purchases,
     });
-  } catch (err) {
-    console.log(err);
+  } catch {
     res.sendStatus(500);
   }
 };
