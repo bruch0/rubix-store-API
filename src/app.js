@@ -31,9 +31,9 @@ app.post('/authorize-password', authorizePasswordRoute);
 
 app.post('/change-password', changePassword);
 
-app.post('/checkout', getUserCheckout);
+app.get('/checkout', authenticationJWT, getUserCheckout);
 
-app.post('/buy-checkout', buyCart);
+app.post('/buy-checkout', authenticationJWT, buyCart);
 
 app.get('/user', authenticationJWT, getUserInfo);
 
