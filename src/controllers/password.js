@@ -32,7 +32,7 @@ const sendRecoveryMail = async (req, res) => {
       `;
     const mail = {
       to: email,
-      from: 'rubix.store.oficial@gmail.com', // Use the email address or domain you verified above
+      from: 'rubix.store.oficial@gmail.com',
       subject: 'Recuperação de senha',
       html: mailMessage,
     };
