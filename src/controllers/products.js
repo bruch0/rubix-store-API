@@ -41,7 +41,7 @@ const getProducts = async (req, res) => {
       delete product.brand_id;
       delete product.weight;
       delete product.size;
-      product.imageUrl = images.rows.filter((img) => img.product_id !== product.id)[0].url;
+      product.imageUrl = images.rows.filter((img) => img.product_id === product.id)[0].url;
     });
 
     if (category) {
