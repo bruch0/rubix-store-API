@@ -111,7 +111,8 @@ const getCart = async (req, res) => {
     );
 
     products.forEach((product) => {
-      product.imageUrl = resultImages.rows.filter((img) => img.product_id !== product.id)[0].url;
+      // eslint-disable-next-line max-len
+      product.imageUrl = resultImages.rows.filter((img) => img.product_id === product.product_id)[0].url;
     });
 
     res.status(200).send(products);

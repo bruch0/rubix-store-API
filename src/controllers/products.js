@@ -11,9 +11,9 @@ const getProducts = async (req, res) => {
   let orderBy = '';
   let searchFor = '';
   if (order === 'price') {
-    orderBy = 'ORDER BY products.value';
-  } else {
     orderBy = 'ORDER BY products.value DESC';
+  } else {
+    orderBy = 'ORDER BY products.value';
   }
   if (search) {
     searchFor = `WHERE products.name ILIKE '%${search}%'`;
@@ -41,7 +41,7 @@ const getProducts = async (req, res) => {
       delete product.brand_id;
       delete product.weight;
       delete product.size;
-      product.imageUrl = images.rows.filter((img) => img.product_id !== product.id)[0].url;
+      product.imageUrl = images.rows.filter((img) => img.product_id === product.id)[0].url;
     });
 
     if (category) {
