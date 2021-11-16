@@ -10,6 +10,7 @@ import signUp from './controllers/signUp.js';
 import getProducts from './controllers/products.js';
 import getProduct from './controllers/product.js';
 import { getUserCheckout, buyCart } from './controllers/checkout.js';
+import getUserInfo from './controllers/user.js';
 
 const app = express();
 app.use(express.json());
@@ -30,9 +31,11 @@ app.post('/authorize-password', authorizePasswordRoute);
 
 app.post('/change-password', changePassword);
 
-app.post('/checkout', getUserCheckout);
+app.get('/checkout', authenticationJWT, getUserCheckout);
 
-app.post('/buy-checkout', buyCart);
+app.post('/buy-checkout', authenticationJWT, buyCart);
+
+app.get('/user', authenticationJWT, getUserInfo);
 
 // DEV_ROUTES
 app.post('/add-category', async (req, res) => {

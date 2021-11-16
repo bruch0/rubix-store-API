@@ -110,10 +110,8 @@ const getCart = async (req, res) => {
       'SELECT url, product_id FROM products_images;',
     );
 
-    const images = resultImages.rows;
-
-    products.forEach((product, index) => {
-      product.imageUrl = images[index].url;
+    products.forEach((product) => {
+      product.imageUrl = resultImages.rows.filter((img) => img.product_id !== product.id)[0].url;
     });
 
     res.status(200).send(products);

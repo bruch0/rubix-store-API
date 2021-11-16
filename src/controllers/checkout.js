@@ -1,32 +1,54 @@
 import connection from '../database/database.js';
 
+const getAuthenticatedUserId = async (sessionId) => {
+  const result = await connection.query(
+    'SELECT * FROM sessions WHERE id = $1;',
+    [sessionId],
+  );
+  return result.rows[0].user_id;
+};
+
 const getUserCheckout = async (req, res) => {
-  const groupProducts = (products) => {
+  const createProductArray = (products) => {
     const resultingProducts = [];
-    const listedIds = [];
-    for (let i = 0; i < products.length; i += 1) {
-      let productCount = 1;
-      if (listedIds.indexOf(products[i].product_id) === -1) {
-        for (let j = 0; j < products.length; j += 1) {
-          if (products[i].product_id === products[j].product_id && i !== j) {
-            productCount += 1;
-            listedIds.push(products[i].product_id);
-          }
-        }
-        resultingProducts.push(
-          {
-            productId: products[i].product_id,
-            productQty: productCount,
-            productName: products[i].name,
-            totalValue: products[i].value * productCount,
-            totalWeight: products[i].weight * productCount,
-            productUrl: products[i].url,
-          },
-        );
-      }
-    }
+
+    products.forEach((product) => {
+      resultingProducts.push(
+        {
+          productId: product.product_id,
+          productQty: product.product_qty,
+          productName: product.name,
+          totalValue: product.value * product.product_qty,
+          totalWeight: product.weight * product.product_qty,
+        },
+      );
+    });
 
     return resultingProducts;
+  };
+
+  const addProductUrl = async (products) => {
+    let query = `WHERE product_id = ${products[0].productId}`;
+    for (let i = 1; i < products.length; i += 1) {
+      query += ` OR product_id = ${products[i].productId}`;
+    }
+
+    const result = await connection.query(`SELECT * FROM products_images ${query}`);
+
+    const listedIds = [];
+    const urls = [];
+    result.rows.forEach((url) => {
+      if (listedIds.indexOf(url.product_id) === -1) {
+        urls.push(url.url);
+        listedIds.push(url.product_id);
+      }
+    });
+
+    products.forEach((product, index) => {
+      product.productUrl = urls[index];
+    });
+
+    return products;
   };
 
   const calculateTotalValue = (products) => {
@@ -48,18 +70,14 @@ const getUserCheckout = async (req, res) => {
     return total;
   };
 
-  const { userId } = req.body;
-
-  if (!userId) {
-    res.sendStatus(401);
-    return;
-  }
+  const userId = await getAuthenticatedUserId(req.sessionId);
 
   try {
-    const result = await connection.query('SELECT cart.*, products.name, products.value, products.weight, products_images.url FROM cart JOIN products ON cart.product_id = products.id JOIN products_images ON cart.product_id = products_images.product_id WHERE cart.user_id = $1', [userId]);
-    const cart = groupProducts(result.rows);
-    const subTotal = calculateTotalValue(cart);
-    const totalWeight = calculateTotalWeight(cart);
+    const result = await connection.query('SELECT cart.*, products.name, products.value, products.weight FROM cart JOIN products ON cart.product_id = products.id WHERE cart.user_id = $1', [userId]);
+    const products = createProductArray(result.rows);
+    const subTotal = calculateTotalValue(products);
+    const totalWeight = calculateTotalWeight(products);
+    const cart = await addProductUrl(products);
     res.send({ cart, subTotal, totalWeight });
   } catch {
     res.sendStatus(500);
@@ -67,7 +85,9 @@ const getUserCheckout = async (req, res) => {
 };
 
 const buyCart = async (req, res) => {
-  const { userId, totalValue, cart } = req.body;
+  const { totalValue, cart } = req.body;
+
+  const userId = await getAuthenticatedUserId(req.sessionId);
 
   if (!cart || !userId || !totalValue || cart.length === 0) {
     res.sendStatus(400);
