@@ -92,6 +92,7 @@ CREATE TABLE "purchases" (
 	"id" serial NOT NULL,
 	"user_id" integer NOT NULL,
 	"total_value" integer NOT NULL,
+	"creation_date" TIMESTAMP NOT NULL DEFAULT 'CURRENT_DATE',
 	CONSTRAINT "purchases_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -141,9 +142,6 @@ CREATE TABLE "cart" (
 ) WITH (
   OIDS=FALSE
 );
-
-
-
 
 ALTER TABLE "addresses" ADD CONSTRAINT "addresses_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
 
