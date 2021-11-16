@@ -1,3 +1,4 @@
+import sendgridMail from '@sendgrid/mail';
 import connection from '../database/database.js';
 
 const getAuthenticatedUserId = async (sessionId) => {
@@ -109,6 +110,26 @@ const buyCart = async (req, res) => {
     });
 
     await connection.query('DELETE FROM cart WHERE user_id = $1', [userId]);
+
+    sendgridMail.setApiKey(process.env.SENGRID_API_KEY);
+
+    const mailMessage = `
+        <h1>Rubix Store<h1>
+        <h3>Obrigado por comprar conosco!</h3>
+        <h4>Valor total da compra: R$ ${totalValue / 100}</h4>
+    `;
+
+    const result = await connection.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const { email } = result.rows[0];
+    console.log(email);
+    const mail = {
+      to: email,
+      from: 'rubix.store.oficial@gmail.com',
+      subject: 'Compra aprovada!',
+      html: mailMessage,
+    };
+
+    sendgridMail.send(mail);
 
     res.sendStatus(200);
   } catch {
