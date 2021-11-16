@@ -11,9 +11,9 @@ const getProducts = async (req, res) => {
   let orderBy = '';
   let searchFor = '';
   if (order === 'price') {
-    orderBy = 'ORDER BY products.value';
-  } else {
     orderBy = 'ORDER BY products.value DESC';
+  } else {
+    orderBy = 'ORDER BY products.value';
   }
   if (search) {
     searchFor = `WHERE products.name ILIKE '%${search}%'`;
