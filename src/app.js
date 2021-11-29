@@ -27,7 +27,6 @@ app.post('/authorize-password', userController.authorizeRecoveryPasswordRoute);
 app.post('/change-password', userController.changeUserPassword);
 
 app.get('/checkout', authenticationJWT, checkoutController.getCheckout);
-
 app.post('/checkout', authenticationJWT, checkoutController.buyCheckout);
 
 app.get('/user', authenticationJWT, userController.getUserInfo);
