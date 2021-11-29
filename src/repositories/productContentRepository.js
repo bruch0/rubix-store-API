@@ -1,4 +1,4 @@
-import connection from '../database/database';
+import connection from '../database/database.js';
 
 const getProductContentById = async ({ productId }) => {
   const content = await connection.query(

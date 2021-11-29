@@ -91,12 +91,12 @@ const getUserInfo = async ({ sessionId }) => {
       (product) => product.purchase_id === purchase.id
     );
 
-    purchaseProducts.forEach((product, index) => {
+    purchaseProducts.forEach((product) => {
       const productImages = images.filter(
         (image) => image.product_id === product.product_id
       );
-      // eslint-disable-next-line prefer-destructuring
-      product.imgUrl = productImages[index].url;
+
+      product.imgUrl = productImages[0]?.url;
     });
 
     purchase.boughtProducts = purchaseProducts;

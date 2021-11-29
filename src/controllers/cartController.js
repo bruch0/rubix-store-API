@@ -16,7 +16,7 @@ const postCart = async (req, res) => {
   const { product_id: productId, product_qty: productQty, isUpdate } = req.body;
   const { sessionId } = req;
 
-  if (!productId || !productQty) return res.sendStatus(400);
+  if (!productId || productQty === undefined) return res.sendStatus(400);
 
   try {
     const success = await cartService.updateCart({

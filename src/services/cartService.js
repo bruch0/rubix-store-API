@@ -12,7 +12,7 @@ const getCart = async ({ sessionId }) => {
   const images = await productImagesRepository.getProductsImages();
 
   cart.forEach((product) => {
-    product.imageUrl = images.rows.filter(
+    product.imageUrl = images.filter(
       (img) => img.product_id === product.product_id
     )[0].url;
   });
