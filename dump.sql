@@ -92,7 +92,7 @@ CREATE TABLE "purchases" (
 	"id" serial NOT NULL,
 	"user_id" integer NOT NULL,
 	"total_value" integer NOT NULL,
-	"creation_date" TIMESTAMP NOT NULL DEFAULT 'CURRENT_DATE',
+	"creation_date" TIMESTAMP NOT NULL,
 	CONSTRAINT "purchases_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
