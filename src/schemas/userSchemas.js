@@ -22,7 +22,7 @@ const signUp = joi.object({
     .length(11)
     .pattern(/^[0-9]+$/)
     .required(),
-  password: joi.string().min(6).required(),
+  password: joi.string().min(8).required(),
 });
 
 export { signIn, signUp };

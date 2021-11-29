@@ -3,8 +3,13 @@ import * as cartService from '../services/cartService.js';
 const getCart = async (req, res) => {
   const { sessionId } = req;
 
-  const cart = await cartService.getCart({ sessionId });
-  return res.status(200).send(cart);
+  try {
+    const cart = await cartService.getCart({ sessionId });
+
+    return res.status(200).send(cart);
+  } catch {
+    return res.sendStatus(500);
+  }
 };
 
 const postCart = async (req, res) => {
@@ -13,17 +18,21 @@ const postCart = async (req, res) => {
 
   if (!productId || !productQty) return res.sendStatus(400);
 
-  const success = await cartService.updateCart({
-    productId,
-    productQty,
-    isUpdate,
-    sessionId,
-  });
+  try {
+    const success = await cartService.updateCart({
+      productId,
+      productQty,
+      isUpdate,
+      sessionId,
+    });
 
-  if (success === -2) return res.sendStatus(400);
-  if (success === -1) return res.sendStatus(403);
+    if (success === -2) return res.sendStatus(400);
+    if (success === -1) return res.sendStatus(403);
 
-  return res.sendStatus(200);
+    return res.sendStatus(200);
+  } catch {
+    return res.sendStatus(500);
+  }
 };
 
 export { getCart, postCart };

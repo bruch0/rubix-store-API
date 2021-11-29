@@ -6,18 +6,22 @@ const signUp = async (req, res) => {
   if (!name || !email || !password || !cpf || !phone)
     return res.sendStatus(400);
 
-  const success = await userService.signUp({
-    name,
-    email,
-    password,
-    cpf,
-    phone,
-  });
+  try {
+    const success = await userService.signUp({
+      name,
+      email,
+      password,
+      cpf,
+      phone,
+    });
 
-  if (success === -2) return res.sendStatus(400);
-  if (success === -1) return res.sendStatus(409);
+    if (success === -2) return res.sendStatus(400);
+    if (success === -1) return res.sendStatus(409);
 
-  return res.sendStatus(201);
+    return res.sendStatus(201);
+  } catch {
+    return res.sendStatus(500);
+  }
 };
 
 const signIn = async (req, res) => {
@@ -25,31 +29,40 @@ const signIn = async (req, res) => {
 
   if (!email || !password) return res.sendStatus(400);
 
-  const userInfo = await userService.signIn({
-    email,
-    password,
-  });
+  try {
+    const userInfo = await userService.signIn({
+      email,
+      password,
+    });
 
-  if (userInfo === -2) return res.sendStatus(400);
-  if (userInfo === -1) return res.sendStatus(401);
+    if (userInfo === -2) return res.sendStatus(400);
+    if (userInfo === -1) return res.sendStatus(401);
 
-  const { userId, name, cpf, phone, token } = userInfo;
+    const { userId, name, cpf, phone, token } = userInfo;
 
-  return res.status(200).send({
-    userId,
-    name,
-    cpf,
-    phone,
-    email,
-    token,
-  });
+    return res.status(200).send({
+      userId,
+      name,
+      cpf,
+      phone,
+      email,
+      token,
+    });
+  } catch {
+    return res.sendStatus(500);
+  }
 };
 
 const getUserInfo = async (req, res) => {
   const { sessionId } = req;
-  const userInfo = await userService.getUserInfo({ sessionId });
 
-  res.send(userInfo);
+  try {
+    const userInfo = await userService.getUserInfo({ sessionId });
+
+    res.send(userInfo);
+  } catch {
+    res.sendStatus(500);
+  }
 };
 
 const requestRecoveryPasswordMail = async (req, res) => {
@@ -57,12 +70,16 @@ const requestRecoveryPasswordMail = async (req, res) => {
 
   if (!email) return res.sendStatus(400);
 
-  const emailSent = await userService.requestRecoveryPasswordMail({ email });
+  try {
+    const emailSent = await userService.requestRecoveryPasswordMail({ email });
 
-  if (emailSent === -1) return res.sendStatus(400);
-  if (emailSent === 0) return res.sendStatus(404);
+    if (emailSent === -1) return res.sendStatus(400);
+    if (emailSent === 0) return res.sendStatus(404);
 
-  return res.sendStatus(200);
+    return res.sendStatus(200);
+  } catch {
+    return res.sendStatus(500);
+  }
 };
 
 const authorizeRecoveryPasswordRoute = async (req, res) => {
@@ -70,14 +87,18 @@ const authorizeRecoveryPasswordRoute = async (req, res) => {
 
   if (!token) return res.sendStatus(401);
 
-  const userEmail = await userService.authorizeRecoveryPasswordRoute({
-    token,
-  });
+  try {
+    const userEmail = await userService.authorizeRecoveryPasswordRoute({
+      token,
+    });
 
-  if (userEmail === -1) return res.sendStatus(404);
-  if (userEmail === 0) return res.sendStatus(408);
+    if (userEmail === -1) return res.sendStatus(404);
+    if (userEmail === 0) return res.sendStatus(408);
 
-  return res.status(200).send({ userEmail });
+    return res.status(200).send({ userEmail });
+  } catch {
+    return res.sendStatus(500);
+  }
 };
 
 const changeUserPassword = async (req, res) => {
@@ -86,9 +107,13 @@ const changeUserPassword = async (req, res) => {
   if (!email || !newPassword || newPassword?.length < 8)
     return res.sendStatus(400);
 
-  await userService.changeUserPassword({ email, newPassword });
+  try {
+    await userService.changeUserPassword({ email, newPassword });
 
-  return res.sendStatus(200);
+    return res.sendStatus(200);
+  } catch {
+    return res.sendStatus(500);
+  }
 };
 
 export {
