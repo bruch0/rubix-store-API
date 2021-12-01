@@ -14,10 +14,10 @@ const getCheckout = async ({ sessionId }) => {
     userProducts.forEach((product) => {
       resultingProducts.push({
         productId: product.product_id,
-        productQty: product.product_qty,
+        productQty: product.qty,
         productName: product.name,
-        totalValue: product.value * product.product_qty,
-        totalWeight: product.weight * product.product_qty,
+        totalValue: product.value * product.qty,
+        totalWeight: product.weight * product.qty,
       });
     });
 
@@ -66,6 +66,7 @@ const getCheckout = async ({ sessionId }) => {
   const products = await cartRepository.getCartByUserId({ userId });
   const images = await productImageRepository.getProductsImages();
 
+  
   const userProducts = createProductArray(products);
   const subTotal = calculateTotalValue(userProducts);
   const totalWeight = calculateTotalWeight(userProducts);
@@ -92,15 +93,15 @@ const buyCheckout = async ({ cart, totalValue, sessionId }) => {
       productId: product.productId,
     });
 
-    await productRepository.updateProductQty({
-      newQty: totalProductQty - product.producyQty,
+	await productRepository.updateProductQty({
+      newQty: Number(totalProductQty) - Number(product.productQty),
       productId: product.productId,
     });
   });
 
   await cartRepository.removeAllCart({ userId });
 
-  const userInfo = userRepository.getUserInfoById({ userId });
+  const userInfo = await userRepository.getUserInfoById({ userId });
   const { email } = userInfo;
 
   mailService.sendPurchaseConfirmationEmail({ email, totalValue });
